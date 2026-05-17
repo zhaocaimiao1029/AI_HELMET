@@ -1,0 +1,15 @@
+# Update these paths if your dataset is stored somewhere else.
+# 如果数据集放在其他位置，请修改下面的路径。
+train: helmet_dataset_rf/v2/train/images
+val: helmet_dataset_rf/v2/valid/images
+test: helmet_dataset_rf/v2/test/images
+
+nc: 2
+names: ['helmet', 'no_helmet']
+
+roboflow:
+  workspace: zhaocaimiao
+  project: helmet-detection-eptj0
+  version: 5
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/zhaocaimiao/helmet-detection-eptj0/dataset/5

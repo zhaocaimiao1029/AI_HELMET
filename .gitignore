@@ -13,3 +13,7 @@ static/captures/
 # Training weights are not needed by server.py at runtime.
 # Keep yolov5n_int8.onnx and helmetv2_int8.onnx for recognition.
 *.pt
+helmet_v2/weights/
+helmet_v2/opt.yaml
+helmet_v2/train_batch*.jpg
+helmet_v2/val_batch*.jpg

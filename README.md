@@ -105,6 +105,9 @@ If there are more persons or helmets in your scene, you can modify these paramet
 - `yolov5n_int8.onnx`: 人体检测模型 / Person detection model
 - `helmetv2_int8.onnx`: 安全帽检测模型 / Helmet detection model
 - `helmet_classes.txt`: 安全帽模型类别标签 / Helmet model class labels
+- `data.yaml`: 安全帽训练数据配置 / Helmet training data config
+- `export_yolo_onnx.py`: YOLOv5 模型导出 ONNX 脚本 / YOLOv5 to ONNX export script
+- `quantize_yolo_int8.py`: ONNX INT8 静态量化脚本 / ONNX INT8 static quantization script
 - `requirements.txt`: Python 依赖 / Python dependencies
 
 ## 安装依赖 / Installation
@@ -115,6 +118,37 @@ pip install -r requirements.txt
 
 树莓派使用 CSI 摄像头时，还需要安装并配置 `picamera2`。  
 If you use a Raspberry Pi CSI camera, you also need to install and configure `picamera2`.
+
+## 导出与量化 / Export and Quantization
+
+如果需要重新训练并替换安全帽模型，可以先用 YOLOv5 训练得到 `.pt` 权重，然后导出 ONNX，再进行 INT8 量化。  
+To retrain and replace the helmet model, first train a YOLOv5 `.pt` weight file, then export it to ONNX and quantize it to INT8.
+
+导出 ONNX 示例：  
+Example ONNX export:
+
+```bash
+python export_yolo_onnx.py \
+  --yolov5-dir path/to/yolov5 \
+  --weights helmet_v2/weights/best.pt \
+  --data data.yaml \
+  --imgsz 320 320 \
+  --output helmet_v2/weights/best.onnx
+```
+
+INT8 量化示例：  
+Example INT8 quantization:
+
+```bash
+python quantize_yolo_int8.py \
+  --fp32 helmet_v2/weights/best.onnx \
+  --int8 helmetv2_int8.onnx \
+  --calib-dir helmet_dataset_rf/v2/train/images \
+  --imgsz 320 320
+```
+
+`data.yaml` 中的训练、验证和测试路径需要根据本地数据集位置进行修改。  
+The train, validation, and test paths in `data.yaml` should be updated according to your local dataset location.
 
 ## 运行 / Run
 
