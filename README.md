@@ -37,6 +37,42 @@ If the helmet recognition accuracy is not good enough, you can train your own he
 当前模型已量化为 INT8，推理速度更快，但精度会有一定下降。建议在合适的距离、光照和摄像头角度下进行测试。  
 The models are quantized to INT8 for faster inference, but accuracy may decrease. Please test at a suitable distance with proper lighting and camera angle.
 
+## 模型训练与标签 / Model Training and Labels
+
+人体检测模型使用 YOLOv5 自带的预训练模型转换而来，原模型包含 COCO 数据集的多个类别。本项目代码只使用其中的 `person` 类。  
+The person detection model is converted from the original pretrained YOLOv5 model, which contains multiple COCO classes. This project only uses the `person` class.
+
+安全帽检测模型是使用本地安全帽数据集训练得到的 YOLOv5 模型，训练图片约 3300 张。数据集标注为 YOLO 格式，每张图片对应一个 `.txt` 标注文件。  
+The helmet detection model is a YOLOv5 model trained with a local helmet dataset of about 3,300 images. The dataset uses YOLO label format, where each image has a corresponding `.txt` label file.
+
+YOLO 标注格式如下：  
+The YOLO label format is:
+
+```text
+class_id x_center y_center width height
+```
+
+其中坐标和宽高是相对于图片尺寸归一化后的数值，范围通常为 `0` 到 `1`。  
+The coordinates, width, and height are normalized by the image size, usually in the range from `0` to `1`.
+
+安全帽模型类别顺序如下，重新训练或替换模型时需要保持一致，否则需要同步修改 `server.py` 中的 `class_names`。  
+The helmet model class order is shown below. Keep the same order when retraining or replacing the model, or update `class_names` in `server.py`.
+
+```text
+0 helmet
+1 no_helmet
+```
+
+代码中的类别配置为：  
+The class configuration in the code is:
+
+```python
+class_names=["helmet", "no_helmet"]
+```
+
+训练完成后，可以将 `.pt` 模型导出为 ONNX，并根据设备性能需求进行 INT8 量化。本仓库运行时使用的是 `helmetv2_int8.onnx`。  
+After training, the `.pt` model can be exported to ONNX and quantized to INT8 depending on device performance needs. This repository uses `helmetv2_int8.onnx` at runtime.
+
 ## 设备与性能 / Device and Performance
 
 测试设备：  
@@ -68,6 +104,7 @@ If there are more persons or helmets in your scene, you can modify these paramet
 - `server.py`: 主程序 / Main program
 - `yolov5n_int8.onnx`: 人体检测模型 / Person detection model
 - `helmetv2_int8.onnx`: 安全帽检测模型 / Helmet detection model
+- `helmet_classes.txt`: 安全帽模型类别标签 / Helmet model class labels
 - `requirements.txt`: Python 依赖 / Python dependencies
 
 ## 安装依赖 / Installation
