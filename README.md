@@ -108,6 +108,7 @@ If there are more persons or helmets in your scene, you can modify these paramet
 - `data.yaml`: 安全帽训练数据配置 / Helmet training data config
 - `export_yolo_onnx.py`: YOLOv5 模型导出 ONNX 脚本 / YOLOv5 to ONNX export script
 - `quantize_yolo_int8.py`: ONNX INT8 静态量化脚本 / ONNX INT8 static quantization script
+- `helmet_v2/`: 安全帽模型训练结果、曲线图、预览标注图和权重文件 / Helmet model training results, curves, label preview images, and weight files
 - `requirements.txt`: Python 依赖 / Python dependencies
 
 ## 安装依赖 / Installation
