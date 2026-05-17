@@ -23,6 +23,29 @@ A Raspberry Pi 4B safety helmet recognition project using two ONNX models for lo
 本版本已移除网页服务、抓拍保存、数据库记录、云端上传和 MQTT 推送，只保留本地识别功能。  
 This version removes the web service, snapshot saving, database records, cloud upload, and MQTT push. Only local recognition is kept.
 
+## 快速开始 / Quick Start
+
+```bash
+git clone https://github.com/zhaocaimiao1029/AI_HELMET.git
+cd AI_HELMET
+pip install -r requirements.txt
+python server.py
+```
+
+如果没有图形界面，可以关闭本地窗口显示，只在终端输出识别结果：  
+If there is no graphical desktop, you can disable the local display window and print recognition results in the terminal only:
+
+```bash
+SHOW_LOCAL_WINDOW=0 python server.py
+```
+
+## 下载完整压缩包 / Download Release Archive
+
+完整项目压缩包可以在 GitHub Release 页面下载：  
+The complete project archive can be downloaded from the GitHub Release page:
+
+https://github.com/zhaocaimiao1029/AI_HELMET/releases/tag/release
+
 ## 模型说明 / Model Notes
 
 - `yolov5n_int8.onnx`: 人体检测模型，使用 YOLOv5 自带的人体检测模型转换而来  
@@ -73,6 +96,16 @@ class_names=["helmet", "no_helmet"]
 训练完成后，可以将 `.pt` 模型导出为 ONNX，并根据设备性能需求进行 INT8 量化。本仓库运行时使用的是 `helmetv2_int8.onnx`。  
 After training, the `.pt` model can be exported to ONNX and quantized to INT8 depending on device performance needs. This repository uses `helmetv2_int8.onnx` at runtime.
 
+## 数据集来源 / Dataset Source
+
+安全帽模型训练时参考并使用了公开数据集：  
+The helmet model training refers to and uses the public dataset:
+
+[njvisionpower/Safety-Helmet-Wearing-Dataset](https://github.com/njvisionpower/Safety-Helmet-Wearing-Dataset)
+
+本项目中的安全帽数据经过本地整理、标注格式转换和训练，最终类别为 `helmet` 和 `no_helmet`。  
+The helmet data in this project was locally organized, converted to YOLO format, and trained with the final classes `helmet` and `no_helmet`.
+
 ## 设备与性能 / Device and Performance
 
 测试设备：  
@@ -110,6 +143,7 @@ If there are more persons or helmets in your scene, you can modify these paramet
 - `quantize_yolo_int8.py`: ONNX INT8 静态量化脚本 / ONNX INT8 static quantization script
 - `helmet_v2/`: 安全帽模型训练结果、曲线图、预览标注图和权重文件 / Helmet model training results, curves, label preview images, and weight files
 - `requirements.txt`: Python 依赖 / Python dependencies
+- `LICENSE`: MIT 开源许可证 / MIT open-source license
 
 ## 安装依赖 / Installation
 
@@ -168,3 +202,10 @@ SHOW_LOCAL_WINDOW=0 python server.py
 
 程序默认从 `source=0` 打开摄像头。按 `Esc` 可以退出本地显示窗口。  
 The program opens the camera from `source=0` by default. Press `Esc` to exit the local display window.
+
+`helmet_v2/train_batch*.jpg` 和 `helmet_v2/val_batch*.jpg` 仅用于展示训练和验证时的标注/预测效果，不代表完整训练数据集。  
+`helmet_v2/train_batch*.jpg` and `helmet_v2/val_batch*.jpg` are only preview images for training and validation labels/predictions. They are not the complete training dataset.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
