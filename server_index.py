@@ -144,7 +144,7 @@ WEB_HOST = os.environ.get("WEB_HOST", "127.0.0.1").strip() or "127.0.0.1"
 WEB_PORT = env_int("WEB_PORT", 5003)
 CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "").strip()
 
-app = Flask(__name__, template_folder=BASE_DIR, static_folder=os.path.join(BASE_DIR, "static"))
+app = Flask(__name__, template_folder=os.path.join(BASE_DIR, "templates"), static_folder=os.path.join(BASE_DIR, "static"))
 if CORS_ORIGINS and CORS is not None:
     origins = [item.strip() for item in CORS_ORIGINS.split(",") if item.strip()]
     CORS(app, resources={r"/api/*": {"origins": origins}, r"/video_feed": {"origins": origins}})

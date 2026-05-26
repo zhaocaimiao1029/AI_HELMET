@@ -156,7 +156,7 @@ If there are more persons or helmets in your scene, you can modify these paramet
 
 - `server.py`: 主程序 / Main program
 - `server_index.py`: 内部网页看板、抓拍记录和 MQTT 推送版本 / Internal web dashboard, snapshot record, and MQTT publishing version
-- `index_internal.html`: 内部网页看板模板 / Internal dashboard template
+- `templates/index_internal.html`: 内部网页看板模板 / Internal dashboard template
 - `yolov5n_int8.onnx`: 人体检测模型 / Person detection model
 - `helmetv2_int8.onnx`: 安全帽检测模型 / Helmet detection model
 - `helmet_classes.txt`: 安全帽模型类别标签 / Helmet model class labels
