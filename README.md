@@ -20,8 +20,14 @@ A Raspberry Pi 4B safety helmet recognition project using two ONNX models for lo
 - 本地实时识别并显示检测框  
   Run local real-time recognition and display detection boxes
 
-本版本已移除网页服务、抓拍保存、数据库记录、云端上传和 MQTT 推送，只保留本地识别功能。  
-This version removes the web service, snapshot saving, database records, cloud upload, and MQTT push. Only local recognition is kept.
+- `server.py` 提供纯本地识别模式  
+  `server.py` provides a local recognition-only mode
+
+- `server_index.py` 提供内部网页看板、抓拍记录和 MQTT 状态推送  
+  `server_index.py` provides an internal web dashboard, snapshot records, and MQTT status publishing
+
+本项目不包含云端上传功能，运行时生成的抓拍图片和数据库文件已通过 `.gitignore` 排除。  
+This project does not include cloud upload. Runtime snapshots and database files are excluded by `.gitignore`.
 
 ## 快速开始 / Quick Start
 
@@ -32,11 +38,25 @@ pip install -r requirements.txt
 python server.py
 ```
 
+内部网页看板模式：  
+Internal web dashboard mode:
+
+```bash
+python server_index.py
+```
+
 如果没有图形界面，可以关闭本地窗口显示，只在终端输出识别结果：  
 If there is no graphical desktop, you can disable the local display window and print recognition results in the terminal only:
 
 ```bash
 SHOW_LOCAL_WINDOW=0 python server.py
+```
+
+测试网页和 API 时，如果不想打开摄像头和模型推理线程，可以使用：  
+For testing the web page and APIs without opening the camera or starting inference, use:
+
+```bash
+START_INFER=0 MQTT_ENABLED=0 python server_index.py
 ```
 
 ## 下载完整压缩包 / Download Release Archive
@@ -135,6 +155,8 @@ If there are more persons or helmets in your scene, you can modify these paramet
 ## 文件说明 / Files
 
 - `server.py`: 主程序 / Main program
+- `server_index.py`: 内部网页看板、抓拍记录和 MQTT 推送版本 / Internal web dashboard, snapshot record, and MQTT publishing version
+- `index_internal.html`: 内部网页看板模板 / Internal dashboard template
 - `yolov5n_int8.onnx`: 人体检测模型 / Person detection model
 - `helmetv2_int8.onnx`: 安全帽检测模型 / Helmet detection model
 - `helmet_classes.txt`: 安全帽模型类别标签 / Helmet model class labels
@@ -187,8 +209,32 @@ The train, validation, and test paths in `data.yaml` should be updated according
 
 ## 运行 / Run
 
+纯本地识别模式：  
+Local recognition-only mode:
+
 ```bash
 python server.py
+```
+
+内部网页看板模式：  
+Internal web dashboard mode:
+
+```bash
+python server_index.py
+```
+
+默认访问地址：  
+Default URL:
+
+```text
+http://127.0.0.1:5003
+```
+
+默认只监听本机地址，避免网页和抓拍记录自动暴露到局域网。如果需要在同一局域网的其他设备访问，可以显式指定：  
+By default, the web service listens on localhost only to avoid exposing the dashboard and snapshots to the LAN. To allow access from other devices in the same LAN, set:
+
+```bash
+WEB_HOST=0.0.0.0 python server_index.py
 ```
 
 如果没有图形界面，可以关闭本地窗口显示，只在终端输出识别结果：  
@@ -196,6 +242,34 @@ If there is no graphical desktop, you can disable the local display window and p
 
 ```bash
 SHOW_LOCAL_WINDOW=0 python server.py
+```
+
+## MQTT
+
+`server_index.py` 默认向本机 MQTT Broker 发布状态消息：  
+`server_index.py` publishes status messages to a local MQTT broker by default:
+
+```text
+helmet/<DEVICE_ID>/status
+helmet/<DEVICE_ID>/event/no_helmet
+```
+
+默认配置如下：  
+Default configuration:
+
+```text
+MQTT_ENABLED=1
+MQTT_HOST=127.0.0.1
+MQTT_PORT=1883
+DEVICE_ID=helmet-detector-01
+```
+
+可以通过环境变量修改或关闭 MQTT：  
+You can change or disable MQTT with environment variables:
+
+```bash
+MQTT_ENABLED=0 python server_index.py
+MQTT_HOST=192.168.1.10 DEVICE_ID=helmet-pi-01 python server_index.py
 ```
 
 ## 说明 / Notes

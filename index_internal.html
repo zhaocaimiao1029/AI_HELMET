@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>安全帽识别内部看板</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f5f5f5;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 95%;
+      height: 95vh;
+      margin: 10px;
+      display: flex;
+      gap: 14px;
+    }
+
+    .left {
+      flex: 40%;
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: 14px;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .right {
+      flex: 60%;
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      padding: 14px;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .top-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .top-card > .panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    .top-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .title .hint {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .line {
+      font-size: 13px;
+      margin: 3px 0;
+      color: #222;
+    }
+
+    .muted { color: #666; }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .ok {
+      color: #16a34a;
+      font-weight: 900;
+    }
+
+    .bad {
+      color: #dc2626;
+      font-weight: 900;
+    }
+
+    .badge-mini {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      font-size: 12px;
+      background: #fff;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    .stat {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 12px 10px;
+    }
+
+    .stat .t {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 2px;
+    }
+
+    .stat .n {
+      font-size: 26px;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .device-list {
+      margin-top: 4px;
+      line-height: 1.7;
+      font-size: 13px;
+      color: #333;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .device-item {
+      display: block;
+    }
+
+    .video-box {
+      background: #fff;
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .video-box img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      object-position: center center;
+      background: #111;
+    }
+
+    #placeholder {
+      display: none;
+    }
+
+    .right-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .right-head h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 950;
+    }
+
+    .right-head .sub {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .events {
+      flex: 1;
+      overflow: auto;
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 1;
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    tbody td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background: #fafafa;
+    }
+
+    .thumb {
+      width: 92px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #eee;
+      background: #ddd;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        align-items: stretch;
+      }
+
+      .container {
+        width: 100%;
+        height: auto;
+        min-height: 100vh;
+        margin: 0;
+        padding: 10px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .left, .right {
+        flex: none;
+        width: 100%;
+        overflow: visible;
+      }
+
+      .left {
+        grid-template-rows: auto auto;
+      }
+
+      .video-box {
+        min-height: 260px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="left">
+      <div class="panel top-box top-card">
+        <div class="title">
+          <h1>安全帽识别看板</h1>
+          <div class="hint">树莓派内部实时查看模式</div>
+        </div>
+
+        <div class="panel" style="padding:12px;">
+          <div class="grid2">
+            <div>
+              <div class="line">更新时间：<span id="last_update" class="muted">-</span></div>
+              <div class="line">状态：<span id="status" class="bad">未连接</span></div>
+              <div class="line">系统信息：<span id="msg" class="muted">-</span></div>
+            </div>
+            <div>
+              <div class="line">服务地址：<span id="edge_base" class="mono muted">-</span> <span id="edge_ok" class="badge-mini">-</span></div>
+              <div class="line">访问方式：<span class="muted">树莓派本机实时视频与抓拍记录</span></div>
+              <div class="line muted" style="margin-top:6px;">当前页面默认连接当前树莓派服务</div>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="t">总人数</div>
+              <div id="total" class="n">0</div>
+            </div>
+            <div class="stat">
+              <div class="t">戴帽人数</div>
+              <div id="helmet" class="n">0</div>
+            </div>
+            <div class="stat">
+              <div class="t">未戴帽人数</div>
+              <div id="nohelmet" class="n">0</div>
+            </div>
+          </div>
+
+          <div class="line" style="margin-top:10px;">推理耗时(ms)：<span id="ms" class="muted">-</span></div>
+          <div class="line" style="margin-top:10px;">在线设备：</div>
+          <div id="device_list" class="device-list">暂无在线设备</div>
+        </div>
+      </div>
+
+      <div class="video-box">
+        <img id="live_video" src="" alt="实时画面" />
+        <div id="placeholder"></div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="right-head">
+        <h2>未戴帽抓拍记录</h2>
+        <div class="sub">树莓派本机抓拍记录与实时更新</div>
+      </div>
+
+      <div class="events">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:170px;">时间</th>
+              <th style="width:140px;">设备</th>
+              <th>人数统计</th>
+              <th style="width:90px;">耗时</th>
+              <th style="width:80px;">ID</th>
+              <th style="width:110px;">截图</th>
+            </tr>
+          </thead>
+          <tbody id="events_tbody">
+            <tr>
+              <td colspan="6" class="muted">加载中…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function fmtTimeSec(sec) {
+      return sec ? new Date(sec * 1000).toLocaleString() : "—";
+    }
+
+    function setBadge(el, ok) {
+      el.textContent = ok ? "正常" : "异常";
+      el.style.borderColor = ok ? "#b7e4c7" : "#f5c2c7";
+      el.style.background = ok ? "#effaf3" : "#fff1f2";
+    }
+
+    async function fetchJson(url, timeoutMs = 1500) {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), timeoutMs);
+      try {
+        const r = await fetch(url, { cache: "no-store", signal: ctrl.signal });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return await r.json();
+      } finally {
+        clearTimeout(t);
+      }
+    }
+
+    function openPreview(url) {
+      window.open(url, "_blank");
+    }
+
+    const EDGE_BASE = "";
+    document.getElementById("edge_base").textContent = location.origin;
+    document.getElementById("live_video").src = "/video_feed";
+
+    function formatDeviceLabel(id) {
+      return String(id || "").trim() || "未知设备";
+    }
+
+    function normalizeMsg(msg) {
+      const s = String(msg || "").trim().toLowerCase();
+      if (s === "running") return "运行中";
+      if (!s) return "正常";
+      return String(msg);
+    }
+
+    async function probeBadges() {
+      try {
+        await fetchJson(`/api/status`, 1200);
+        setBadge(document.getElementById("edge_ok"), true);
+      } catch (e) {
+        setBadge(document.getElementById("edge_ok"), false);
+      }
+    }
+
+    async function fetchStatus() {
+      try {
+        const data = await fetchJson(`/api/status`, 1200);
+
+        document.getElementById("status").textContent = "已连接";
+        document.getElementById("status").className = "ok";
+        document.getElementById("last_update").textContent = new Date().toLocaleString();
+        document.getElementById("msg").textContent = normalizeMsg(data.message);
+        document.getElementById("total").textContent = data.total_person ?? data.total_count ?? 0;
+        document.getElementById("helmet").textContent = data.helmet_person ?? data.helmet_count ?? 0;
+        document.getElementById("nohelmet").textContent = data.no_helmet_person ?? data.no_helmet_count ?? 0;
+        document.getElementById("ms").textContent = data.last_frame_ms ?? data.infer_ms ?? "-";
+      } catch (err) {
+        document.getElementById("status").textContent = "获取失败";
+        document.getElementById("status").className = "bad";
+        document.getElementById("msg").textContent = "树莓派状态获取失败";
+      }
+    }
+
+    async function fetchDeviceList() {
+      try {
+        const d = await fetchJson(`/api/status`, 1200);
+        const list = Array.isArray(d) ? d : [d];
+        const ids = list.map(item => item?.device_id).filter(Boolean);
+
+        const box = document.getElementById("device_list");
+        if (!ids.length) {
+          box.textContent = "暂无在线设备";
+          return;
+        }
+
+        box.innerHTML = ids.map(id => `<span class="device-item">• ${formatDeviceLabel(id)}</span>`).join("");
+      } catch (e) {
+        document.getElementById("device_list").textContent = "设备列表获取失败";
+      }
+    }
+
+    async function fetchCaptures() {
+      const tb = document.getElementById("events_tbody");
+      try {
+        const data = await fetchJson(`/api/captures?limit=60`, 1800);
+        const list = data.items || [];
+
+        if (!Array.isArray(list) || list.length === 0) {
+          tb.innerHTML = `<tr><td colspan="6" class="muted">暂无抓拍记录</td></tr>`;
+          return;
+        }
+
+        tb.innerHTML = list.map(it => {
+          const t = fmtTimeSec(it.ts || 0);
+          const did = formatDeviceLabel(it.device_id || "—");
+          const stat = `总:${it.total_person} / 戴帽:${it.helmet_person} / 未戴帽:${it.no_helmet_person}`;
+          const ms = it.last_frame_ms ?? "—";
+          const id = it.id ?? "—";
+
+          const imgUrl = it.img_url || "";
+          const imgTd = imgUrl
+            ? `<img class="thumb" src="${imgUrl}" loading="lazy" onclick="openPreview('${imgUrl}')" />`
+            : `<span class="muted">-</span>`;
+
+          return `<tr>
+            <td>${t}</td>
+            <td>${did}</td>
+            <td>${stat}</td>
+            <td>${ms}</td>
+            <td>${id}</td>
+            <td>${imgTd}</td>
+          </tr>`;
+        }).join("");
+      } catch (e) {
+        tb.innerHTML = `<tr><td colspan="6" class="muted">抓拍记录获取失败</td></tr>`;
+      }
+    }
+
+    (async () => {
+      await probeBadges();
+      await fetchStatus();
+      await fetchDeviceList();
+      await fetchCaptures();
+
+      setInterval(fetchStatus, 1000);
+      setInterval(fetchDeviceList, 5000);
+      setInterval(fetchCaptures, 2000);
+    })();
+  </script>
+</body>
+</html>

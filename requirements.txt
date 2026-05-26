@@ -1,3 +1,6 @@
 numpy
 opencv-python
 onnxruntime
+Flask
+flask-cors
+paho-mqtt
